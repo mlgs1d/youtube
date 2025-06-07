@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import ytdl from "@distube/ytdl-core";
 import { spawn } from "child_process";
 
-export const maxDuration = 300; // 5 minutes timeout
+export const maxDuration = 60; // 1 minute timeout
 
 export async function POST(request: NextRequest) {
   try {
