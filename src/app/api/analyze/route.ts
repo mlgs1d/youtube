@@ -25,33 +25,34 @@ export async function POST(request: NextRequest) {
     const allFormats = new Map();
 
     // Add combined formats (video+audio) - typically limited to lower resolutions
-    // const combinedFormats = info.formats
-    //   .filter(
-    //     (format) => format.hasVideo && format.hasAudio && format.qualityLabel
-    //   )
-    //   .forEach((format) => {
-    //     const quality = format.qualityLabel || format.quality || "Unknown";
-    //     const key = `${quality}_combined`;
-    //     const resolution = extractResolution(quality);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const combinedFormats = info.formats
+      .filter(
+        (format) => format.hasVideo && format.hasAudio && format.qualityLabel
+      )
+      .forEach((format) => {
+        const quality = format.qualityLabel || format.quality || "Unknown";
+        const key = `${quality}_combined`;
+        const resolution = extractResolution(quality);
 
-    //     if (!allFormats.has(key)) {
-    //       allFormats.set(key, {
-    //         quality: quality,
-    //         format: format.container || "mp4",
-    //         filesize: format.contentLength
-    //           ? `~${Math.round(
-    //               Number.parseInt(format.contentLength) / (1024 * 1024)
-    //             )} MB`
-    //           : estimateFileSize(resolution, false),
-    //         itag: format.itag,
-    //         mimeType: format.mimeType,
-    //         hasAudio: true,
-    //         hasVideo: true,
-    //         isHighQuality: false, // Combined formats are never marked as high quality
-    //         resolution: resolution,
-    //       });
-    //     }
-    //   });
+        if (!allFormats.has(key)) {
+          allFormats.set(key, {
+            quality: quality,
+            format: format.container || "mp4",
+            filesize: format.contentLength
+              ? `~${Math.round(
+                  Number.parseInt(format.contentLength) / (1024 * 1024)
+                )} MB`
+              : estimateFileSize(resolution, false),
+            itag: format.itag,
+            mimeType: format.mimeType,
+            hasAudio: true,
+            hasVideo: true,
+            isHighQuality: false, // Combined formats are never marked as high quality
+            resolution: resolution,
+          });
+        }
+      });
 
     // Add high-quality formats (video-only + audio) - for better quality
     // Get best video-only formats for each quality
@@ -214,12 +215,12 @@ function estimateVideoSize(resolution: number): number {
   return estimates[resolution] || 10;
 }
 
-// function estimateFileSize(resolution: number, isHighQuality: boolean): string {
-//   const videoSize = estimateVideoSize(resolution);
-//   const audioSize = 3;
-//   const totalSize = isHighQuality ? videoSize + audioSize : videoSize;
-//   return `~${totalSize} MB`;
-// }
+function estimateFileSize(resolution: number, isHighQuality: boolean): string {
+  const videoSize = estimateVideoSize(resolution);
+  const audioSize = 3;
+  const totalSize = isHighQuality ? videoSize + audioSize : videoSize;
+  return `~${totalSize} MB`;
+}
 
 function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
